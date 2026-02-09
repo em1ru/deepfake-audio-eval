@@ -1,65 +1,53 @@
 # Deepfake Audio Detection: Cross-Dataset Evaluation
 
-Part of my research on audio deepfake detection, investigating how well pre-trained models generalize across different datasets.
+Evaluating how well pre-trained deepfake detectors generalize beyond their training data.
 
-## Motivation
+## Why This Matters
 
-Pre-trained deepfake detectors often report 99%+ accuracy, but how well do they perform on data they weren't trained on? This project evaluates a state-of-the-art model across multiple datasets to understand its real-world reliability.
+Pre-trained models often claim 99%+ accuracy, but those numbers come from evaluations on similar data. Real-world performance can be dramatically different.
 
 ## Datasets
 
-| Dataset | Samples | Source | Description |
-|---------|---------|--------|-------------|
-| [In-The-Wild](https://github.com/piotrmwojcik/In-The-Wild) | 31k+ | YouTube | Real-world audio, various speakers |
-| [Fake-or-Real](https://www.kaggle.com/datasets/mohammedabdeldayem/the-fake-or-real-dataset) | TBD | Kaggle | TTS-generated fakes |
+| Dataset | Samples | Source |
+|---------|---------|--------|
+| [In-The-Wild](https://github.com/piotrmwojcik/In-The-Wild) | ~19k | YouTube clips |
+| [Fake-or-Real](https://www.kaggle.com/datasets/mohammedabdeldayem/the-fake-or-real-dataset) | ~69k | TTS-generated (Deep Voice 3, Wavenet, etc) |
 
 ## Results
 
-| Dataset | Accuracy | Recall (Fake) | F1 |
-|---------|----------|---------------|-----|
-| Original Eval | 99.7% | - | - |
-| In-The-Wild | 42% | 12.4% | 17.6% |
-| Fake-or-Real | TBD | TBD | TBD |
+| Dataset | Accuracy | Precision | Recall | F1 |
+|---------|----------|-----------|--------|-----|
+| Original Eval (reported) | 99.7% | - | - | - |
+| In-The-Wild | 43.2% | 34.5% | 15.1% | 21.0% |
+| Fake-or-Real | 59.3% | 81.5% | 24.1% | 37.2% |
 
-## Key Findings
+The model's reported 99.7% accuracy drops to near-random on out-of-distribution data. Most concerning: ~85% of deepfakes slip through undetected (low recall), and the model remains highly confident even on wrong predictions.
 
-**In-The-Wild results:**
-- Model performs worse than random guessing (42% vs 50%)
-- 87% of deepfakes pass undetected
-- High confidence even on wrong predictions
+## Notebooks
 
-## Project Structure
-
-```
-├── notebooks/
-│   ├── 01_in_the_wild.ipynb    # In-The-Wild evaluation
-│   ├── 02_fake_or_real.ipynb   # Fake-or-Real evaluation  
-│   └── 03_comparison.ipynb     # Cross-dataset analysis
-├── data/                       # Dataset files (not tracked)
-├── requirements.txt
-└── README.md
-```
+| Notebook | Description |
+|----------|-------------|
+| `01_in_the_wild.ipynb` | Full evaluation on In-The-Wild dataset |
+| `02_fake_or_real.ipynb` | Full evaluation on Fake-or-Real dataset |
+| `03_comparison.ipynb` | Side-by-side analysis |
+| `04_benchmark.ipynb` | Quick benchmark on balanced samples |
 
 ## Setup
 
 ```bash
-git clone https://github.com/yourusername/deepfake-audio-eval
-cd deepfake-audio-eval
-python -m venv venv && source venv/bin/activate
+git clone <repo-url>
+cd melody
 pip install -r requirements.txt
 ```
 
+Download datasets to `data/` and run notebooks in order.
+
 ## Model
 
-[MelodyMachine/Deepfake-audio-detection-V2](https://huggingface.co/MelodyMachine/Deepfake-audio-detection-V2) - Wav2Vec2-based binary classifier fine-tuned for deepfake detection.
+[MelodyMachine/Deepfake-audio-detection-V2](https://huggingface.co/MelodyMachine/Deepfake-audio-detection-V2) — Wav2Vec2-based classifier.
 
-## Tech Stack
+## Dependencies
 
-- HuggingFace Transformers
-- librosa
-- scikit-learn
-- pandas, matplotlib, seaborn
-
-## License
-
-MIT
+- transformers, torch, librosa
+- pandas, numpy, scikit-learn
+- matplotlib, seaborn, tqdm
